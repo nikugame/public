@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package proto;
+option java_package = "com.nkgame";
+
+service PlatformLogin
+{
+
+    rpc Login(LoginRequest) returns (LoginReply) {}
+
+}
+
+message DeviceInfo
+{
+	string GameID 		    = 1;	//游戏ID
+	string Channel 		    = 2;	//渠道ID
+	string DeviceType 	    = 3;	//设备类型
+	string IMEI 		    = 4;	//设备标识码
+	string MAC 			    = 5;	//网卡地址
+	string IPv4 		    = 6;	//IPv4地址
+	string IPv6 		    = 7;	//IPv6地址
+	string OS 				= 8;	//系统类型
+	string Latitude         = 9;    //纬度
+    string Longitude        = 10;   //经度
+}
+
+message LoginRequest
+{
+    string UUID             = 1;    //渠道ID
+    string Token            = 2;    //渠道登陆安全秘钥
+    DeviceInfo DeviceInfo   = 3;    //设备信息
+}
+
+message LoginReply
+{
+    bool Result     = 1;    //是否成功
+    string UUID     = 2;    //NiK用户ID
+    string Token    = 3;    //NiK登陆安全秘钥
+    string extra    = 4;    //渠道相关信息,json格式
+}
