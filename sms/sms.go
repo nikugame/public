@@ -8,10 +8,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"public/config"
-	"public/tools"
 	"sort"
 	"strings"
+
+	"github.com/nikgame/public/config"
+	"github.com/nikgame/public/tools"
 
 	"fmt"
 

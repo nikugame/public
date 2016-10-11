@@ -5,8 +5,9 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"public/config"
-	"public/tools"
+
+	"github.com/nikgame/public/config"
+	"github.com/nikgame/public/tools"
 	//use mysql database
 	_ "github.com/go-sql-driver/mysql"
 )

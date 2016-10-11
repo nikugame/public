@@ -5,9 +5,10 @@ package pool
 import (
 	"fmt"
 	"os"
-	"public/config"
-	"public/tools"
 	"time"
+
+	"github.com/nikgame/public/config"
+	"github.com/nikgame/public/tools"
 
 	"github.com/garyburd/redigo/redis"
 )
