@@ -4,9 +4,9 @@ package db
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/nikgame/public/config"
+	"github.com/nikgame/public/log"
 	"github.com/nikgame/public/tools"
 	//use mysql database
 	_ "github.com/go-sql-driver/mysql"
@@ -22,9 +22,9 @@ func init() {
 	DB.SetMaxOpenConns(conf.open)
 	DB.SetMaxIdleConns(conf.idle)
 	if err := DB.Ping(); err != nil {
-		fmt.Printf("[%s] DB Ping ERROR: %s", tools.TimeStampString(), err)
+		log.Log("DB Ping ERROR: %s", err)
 	}
-	fmt.Printf("[%s] database connect ...", tools.TimeStampString())
+	log.Log("database connect ...")
 }
 
 type dbConf struct {

@@ -3,14 +3,13 @@
 package pool
 
 import (
-	"fmt"
 	"os"
 	"time"
 
-	"github.com/nikgame/public/config"
-	"github.com/nikgame/public/tools"
-
 	"github.com/garyburd/redigo/redis"
+	"github.com/nikgame/public/config"
+	"github.com/nikgame/public/log"
+	"github.com/nikgame/public/tools"
 )
 
 //Client reids连接池客户端
@@ -26,7 +25,7 @@ func init() {
 		Dial: func() (redis.Conn, error) {
 			c, err := redis.Dial("tcp", conf.connPath())
 			if err != nil {
-				fmt.Printf("[%s] Redis Connect ERROR: %s", tools.TimeStampString(), err)
+				log.Log("Redis Connect ERROR: %s", err)
 				os.Exit(1)
 			}
 			if conf.mode {

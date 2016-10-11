@@ -14,9 +14,8 @@ import (
 	"github.com/nikgame/public/config"
 	"github.com/nikgame/public/tools"
 
-	"fmt"
-
 	"github.com/axgle/mahonia"
+	"github.com/nikgame/public/log"
 )
 
 //SendMessage func(phone, code string) error Send SMS function
@@ -56,13 +55,13 @@ func beiwei(phone, code string) error {
 	u.RawQuery = q.Encode()
 	res, err := http.Get(u.String())
 	if err != nil {
-		fmt.Printf("[%s] beiwei can't connect %s \n", tools.TimeStampString(), err)
+		log.Log("beiwei connect error : %s", err)
 		return err
 	}
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 	if err != nil {
-		fmt.Printf("[%s] body error: %s \n", tools.TimeStampString(), err)
+		log.Log("beiwei sms body error: %s", err)
 		return err
 	}
 	if !strings.Contains(string(body), rrid) {
@@ -107,24 +106,24 @@ func dayu(phone, code string) error {
 
 	request, err := http.NewRequest("POST", conf.String("ALIDAYU::url"), body)
 	if err != nil {
-		fmt.Printf("[%s]dayu request error: %s \n", tools.TimeStampString(), err)
+		log.Log("dayu request error: %s", err)
 		return err
 	}
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
 	response, err := client.Do(request)
 	if err != nil {
-		fmt.Printf("[%s]dayu response error: %s \n", tools.TimeStampString(), err)
+		log.Log("dayu response error: %s", err)
 		return err
 	}
 	b, err := ioutil.ReadAll(response.Body)
 	defer response.Body.Close()
 	if err != nil {
-		fmt.Printf("[%s]dayu response body error: %s \n", tools.TimeStampString(), err)
+		log.Log("dayu response body error: %s", err)
 		return err
 	}
 	var alim map[string]interface{}
 	if err = json.Unmarshal(b, &alim); err != nil {
-		fmt.Printf("[%s]dayu json error: %s \n", tools.TimeStampString(), err)
+		log.Log("dayu json error: %s", err)
 		return err
 	}
 	if _, found := alim["alibaba_aliqin_fc_sms_num_send_response"]; found {
@@ -137,12 +136,14 @@ func dayu(phone, code string) error {
 			} `json:"alibaba_aliqin_fc_sms_num_send_response"`
 		}
 		if err := json.Unmarshal(b, &res); err != nil {
-			fmt.Printf("[%s]dayu success json error: %s, json: %s \n", tools.TimeStampString(), err, b)
+			log.Log("dayu success json error: %s, json: %s", err, b)
 			return err
 		}
 		switch res.Key.Code {
 		case "0":
 			return nil
+		default:
+			return errors.New(res.Key.Code)
 		}
 	}
 	if _, found := alim["error_response"]; found {
@@ -155,7 +156,7 @@ func dayu(phone, code string) error {
 			} `json:"error_response"`
 		}
 		if err := json.Unmarshal(b, &res); err != nil {
-			fmt.Printf("[%s]dayu error json error: %s, json: %s \n", tools.TimeStampString(), err, b)
+			log.Log("dayu error json error: %s, json: %s", err, b)
 			return err
 		}
 		return errors.New(res.Key.Message)
