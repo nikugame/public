@@ -11,11 +11,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/axgle/mahonia"
 	"github.com/nikgame/public/config"
 	"github.com/nikgame/public/tools"
-
-	"github.com/axgle/mahonia"
-	"github.com/nikgame/public/log"
 )
 
 //SendMessage func(phone, code string) error Send SMS function
@@ -29,9 +27,42 @@ func SendMessage(phone, code string) error {
 		return beiwei(phone, code)
 	case 2:
 		return dayu(phone, code)
+	case 3:
+		return xiao(phone, code)
 	default:
 		return errors.New("error configure")
 	}
+}
+
+func xiao(phone, code string) error {
+	conf, _ := config.NewConfig("ini", "conf/settings.conf")
+
+	u, _ := url.Parse(conf.String("XIAO::url"))
+	q := u.Query()
+
+	q.Set("uid", conf.String("XIAO::uid"))
+	q.Set("auth", tools.BuilderMD5(tools.StringJoin("", conf.String("XIAO::cid"), conf.String("XIAO::pwd"))))
+	q.Set("expid", "0")
+	q.Set("encode", "utf-8")
+	decoder := mahonia.NewEncoder("utf-8")
+	q.Set("msg", decoder.ConvertString(strings.Replace(conf.String("XIAO::content"), "*", code, -1)))
+	q.Set("mobile", phone)
+
+	u.RawQuery = q.Encode()
+	response, err := http.Get(u.String())
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+	res := strings.Split(string(body), ",")
+	if strings.EqualFold(res[0], "0") {
+		return nil
+	}
+	return errors.New("sms error")
 }
 
 //beiwei func(phone, code string) error send sms use beiwei
@@ -55,13 +86,11 @@ func beiwei(phone, code string) error {
 	u.RawQuery = q.Encode()
 	res, err := http.Get(u.String())
 	if err != nil {
-		log.Log("beiwei connect error : %s", err)
 		return err
 	}
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 	if err != nil {
-		log.Log("beiwei sms body error: %s", err)
 		return err
 	}
 	if !strings.Contains(string(body), rrid) {
@@ -106,24 +135,20 @@ func dayu(phone, code string) error {
 
 	request, err := http.NewRequest("POST", conf.String("ALIDAYU::url"), body)
 	if err != nil {
-		log.Log("dayu request error: %s", err)
 		return err
 	}
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
 	response, err := client.Do(request)
 	if err != nil {
-		log.Log("dayu response error: %s", err)
 		return err
 	}
 	b, err := ioutil.ReadAll(response.Body)
 	defer response.Body.Close()
 	if err != nil {
-		log.Log("dayu response body error: %s", err)
 		return err
 	}
 	var alim map[string]interface{}
 	if err = json.Unmarshal(b, &alim); err != nil {
-		log.Log("dayu json error: %s", err)
 		return err
 	}
 	if _, found := alim["alibaba_aliqin_fc_sms_num_send_response"]; found {
@@ -136,7 +161,6 @@ func dayu(phone, code string) error {
 			} `json:"alibaba_aliqin_fc_sms_num_send_response"`
 		}
 		if err := json.Unmarshal(b, &res); err != nil {
-			log.Log("dayu success json error: %s, json: %s", err, b)
 			return err
 		}
 		switch res.Key.Code {
@@ -156,7 +180,6 @@ func dayu(phone, code string) error {
 			} `json:"error_response"`
 		}
 		if err := json.Unmarshal(b, &res); err != nil {
-			log.Log("dayu error json error: %s, json: %s", err, b)
 			return err
 		}
 		return errors.New(res.Key.Message)
