@@ -4,68 +4,52 @@ package pool
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/garyburd/redigo/redis"
 	"github.com/nikgame/public/config"
 	"github.com/nikgame/public/log"
-	"github.com/nikgame/public/tools"
 )
 
 //Client reids连接池客户端
 var Client *redis.Pool
 
 func init() {
-	var conf redisConf
-	conf.init()
-	Client = &redis.Pool{
-		MaxIdle:     conf.idle,
-		MaxActive:   conf.active,
-		IdleTimeout: conf.Timeout(),
-		Dial: func() (redis.Conn, error) {
-			c, err := redis.Dial("tcp", conf.connPath())
-			if err != nil {
-				log.Log("Redis Connect ERROR: %s", err)
-				os.Exit(1)
-			}
-			if conf.mode {
-				if _, err := c.Do("AUTH", conf.auth); err != nil {
+	conf, _ := config.NewConfig("ini", "conf/settings.conf")
+	path := strings.Join([]string{conf.DefaultString("Redis::host", "127.0.0.1"), ":", conf.DefaultString("Redis::port", "6379")}, "")
+	if conf.DefaultBool("Redis::mode", false) {
+		Client = &redis.Pool{
+			MaxIdle:     conf.DefaultInt("Redis::idle", 5),
+			MaxActive:   conf.DefaultInt("Redis::active", 500),
+			IdleTimeout: time.Duration(conf.DefaultInt("Redis::timeout", 180)) * time.Second,
+			Dial: func() (redis.Conn, error) {
+				c, err := redis.Dial("tcp", path)
+				if err != nil {
+					log.Log("Redis Connect ERROR: %s", err)
+					panic(err)
+				}
+				if _, err := c.Do("AUTH", conf.DefaultString("Redis::password", "")); err != nil {
 					c.Close()
 					return nil, err
 				}
-			}
-			return c, nil
-		},
+				return c, nil
+			},
+		}
+	} else {
+		Client = &redis.Pool{
+			MaxIdle:     conf.DefaultInt("Redis::idle", 5),
+			MaxActive:   conf.DefaultInt("Redis::active", 500),
+			IdleTimeout: time.Duration(conf.DefaultInt("Redis::timeout", 180)) * time.Second,
+			Dial: func() (redis.Conn, error) {
+				c, err := redis.Dial("tcp", path)
+				if err != nil {
+					log.Log("Redis Connect ERROR: %s", err)
+					os.Exit(1)
+				}
+				return c, nil
+			},
+		}
 	}
-}
 
-func (r *redisConf) init() {
-	conf, _ := config.NewConfig("ini", "conf/settings.conf")
-	r.host = conf.DefaultString("Redis::host", "127.0.0.1")
-	r.port = conf.DefaultString("Redis::port", "6379")
-	r.mode = conf.DefaultBool("Redis::mode", false)
-	if r.mode {
-		r.auth = conf.DefaultString("Redis::password", "")
-	}
-	r.wait = conf.DefaultInt("Redis::timeout", 180)
-	r.idle = conf.DefaultInt("Redis::idle", 5)
-	r.active = conf.DefaultInt("Redis::active", 500)
-}
-
-func (r *redisConf) connPath() string {
-	return tools.StringJoin(":", r.host, r.port)
-}
-
-func (r *redisConf) Timeout() time.Duration {
-	return time.Duration(r.wait) * time.Second
-}
-
-type redisConf struct {
-	host   string
-	port   string
-	auth   string
-	mode   bool
-	wait   int
-	active int
-	idle   int
 }
