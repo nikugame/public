@@ -4,10 +4,10 @@ package db
 
 import (
 	"database/sql"
+	"strings"
 
 	"github.com/nikgame/public/config"
 	"github.com/nikgame/public/log"
-	"github.com/nikgame/public/tools"
 	//use mysql database
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -16,43 +16,15 @@ import (
 var DB *sql.DB
 
 func init() {
-	var conf dbConf
-	conf.init()
-	DB, _ := sql.Open("mysql", conf.connPath())
-	DB.SetMaxOpenConns(conf.open)
-	DB.SetMaxIdleConns(conf.idle)
+	conf, _ := config.NewConfig("ini", "conf/settings.conf")
+	path := strings.Join([]string{conf.DefaultString("Mysql::user", "root"), ":", conf.DefaultString("Mysql::password", "password"), "@tcp(", conf.DefaultString("Mysql::host", "localhost"), ":", conf.DefaultString("Mysql::port", "3306"), ")/", conf.DefaultString("Mysql::dbname", "test"), "?charset=utf8&loc=Asia%2FShanghai"}, "")
+	log.Log(path)
+	DB, _ = sql.Open("mysql", path)
+	DB.SetMaxOpenConns(conf.DefaultInt("Mysql::open", 100))
+	DB.SetMaxIdleConns(conf.DefaultInt("Mysql::idle", 10))
 	if err := DB.Ping(); err != nil {
-		log.Log("DB Ping ERROR: %s", err)
+		log.Log("DB Ping ERROR: %v", err)
+		panic(err)
 	}
 	log.Log("database connect ...")
-}
-
-type dbConf struct {
-	host   string
-	port   string
-	user   string
-	passwd string
-	dbname string
-	open   int
-	idle   int
-}
-
-//init func() 加载配置文件，获取mysql链接参数
-func (c *dbConf) init() {
-	conf, _ := config.NewConfig("ini", "conf/settings.conf")
-	c.host = conf.DefaultString("Mysql::host", "localhost")
-	c.port = conf.DefaultString("Mysql::port", "3306")
-	c.user = conf.DefaultString("Mysql::user", "root")
-	c.passwd = conf.DefaultString("Mysql::password", "")
-	c.dbname = conf.DefaultString("Mysql::dbname", "test")
-	c.open = conf.DefaultInt("Mysql::open", 100)
-	c.idle = conf.DefaultInt("Mysql::idle", 10)
-}
-
-//connPath func() string 生成mysql链接字符串
-func (c *dbConf) connPath() string {
-	auth := tools.StringJoin(":", c.user, c.passwd)
-	path := tools.StringJoin(":", c.host, c.port)
-	common := tools.StringJoin("?", c.dbname, "charset=utf8&loc=Asia%2FShanghai")
-	return tools.StringJoin("", auth, "@", path, "/", common)
 }
