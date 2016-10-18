@@ -6,8 +6,8 @@ import (
 	"database/sql"
 	"strings"
 
-	"github.com/nikgame/public/config"
-	"github.com/nikgame/public/log"
+	"github.com/nikugame/public/config"
+	"github.com/nikugame/public/log"
 	//use mysql database
 	_ "github.com/go-sql-driver/mysql"
 )

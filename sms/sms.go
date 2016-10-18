@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/axgle/mahonia"
-	"github.com/nikgame/public/config"
-	"github.com/nikgame/public/tools"
+	"github.com/nikugame/public/config"
+	"github.com/nikugame/public/tools"
 )
 
 //SendMessage func(phone, code string) error Send SMS function

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/garyburd/redigo/redis"
-	"github.com/nikgame/public/config"
-	"github.com/nikgame/public/log"
+	"github.com/nikugame/public/config"
+	"github.com/nikugame/public/log"
 )
 
 //Client reids连接池客户端
