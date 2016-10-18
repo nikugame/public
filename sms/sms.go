@@ -5,6 +5,7 @@ package sms
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -151,23 +152,27 @@ func dayu(phone, code string) error {
 	if err = json.Unmarshal(b, &alim); err != nil {
 		return err
 	}
+	fmt.Printf("ALIM : %v \n", alim)
 	if _, found := alim["alibaba_aliqin_fc_sms_num_send_response"]; found {
 		var res struct {
 			Key struct {
-				Code    string `json:"err_code"`
-				Model   string `json:"model"`
-				Success string `json:"success"`
-				Message string `json:"msg"`
+				Result struct {
+					Code    string `json:"err_code"`
+					Model   string `json:"model"`
+					Success bool   `json:"success"`
+				} `json:"result"`
+				ID string `json:"request_id"`
 			} `json:"alibaba_aliqin_fc_sms_num_send_response"`
 		}
 		if err := json.Unmarshal(b, &res); err != nil {
 			return err
 		}
-		switch res.Key.Code {
+		fmt.Printf("res: %v \n", res)
+		switch res.Key.Result.Code {
 		case "0":
 			return nil
 		default:
-			return errors.New(res.Key.Code)
+			return errors.New(res.Key.Result.Code)
 		}
 	}
 	if _, found := alim["error_response"]; found {
