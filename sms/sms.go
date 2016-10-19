@@ -5,6 +5,7 @@ package sms
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -166,7 +167,7 @@ func dayu(phone, code string) error {
 		if err := json.Unmarshal(b, &res); err != nil {
 			return err
 		}
-		// fmt.Printf("res: %v \n", res)
+
 		switch res.Key.Result.Code {
 		case "0":
 			return nil
@@ -186,7 +187,59 @@ func dayu(phone, code string) error {
 		if err := json.Unmarshal(b, &res); err != nil {
 			return err
 		}
-		return errors.New(res.Key.Message)
+		switch res.Key.SubCode {
+		case "isv.OUT_OF_SERVICE":
+			fmt.Println("短信业务停机，要充值！")
+			return errors.New("System ERROR, Try later!")
+		case "isv.PRODUCT_UNSUBSCRIBE":
+			fmt.Println("产品服务未开通，参数配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.ACCOUNT_NOT_EXISTS":
+			fmt.Println("账户信息不存在，参数配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.ACCOUNT_ABNORMAL":
+			fmt.Println("账户信息异常，联系大于客服")
+			return errors.New("System ERROR, Try later!")
+		case "isv.SMS_TEMPLATE_ILLEGAL":
+			fmt.Println("模板不合法， 参数配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.SMS_SIGNATURE_ILLEGAL":
+			fmt.Println("签名不合法，参数配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.MOBILE_NUMBER_ILLEGAL":
+			fmt.Println("手机号码格式错误，检查是否存在漏洞，被非法调用 ")
+			return errors.New("Bad Request, Must phone number!")
+		case "isv.MOBILE_COUNT_OVER_LIMIT":
+			fmt.Println("手机号码数量超过限制, 不能超过200个号码")
+			return errors.New("Too many phone number!")
+		case "isv.TEMPLATE_MISSING_PARAMETERS":
+			fmt.Println("短信模板变量缺少参数，配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.INVALID_PARAMETERS":
+			fmt.Println("参数异常，配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.BUSINESS_LIMIT_CONTROL":
+			fmt.Printf("%s : 超过1分钟1条 或者 1分钟7条 1天50条限制 \n", phone)
+			return errors.New("Send too often, Please try 1 min later")
+		case "isv.INVALID_JSON_PARAM":
+			fmt.Println("JSON参数不合法，代码被改了？")
+			return errors.New("System ERROR, Try later!")
+		case "isp.SYSTEM_ERROR":
+			fmt.Println("大于挂了！改用其他通道发送")
+			return beiwei(phone, code)
+		case "isv.BLACK_KEY_CONTROL_LIMIT":
+			fmt.Println("模板变量中存在黑名单关键字，大于后台配置错")
+			return errors.New("System ERROR, Try later!")
+		case "isv.PARAM_NOT_SUPPORT_URL":
+			fmt.Println("不支持url为变量，配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.PARAM_LENGTH_LIMIT":
+			fmt.Println("变量长度受限，配置错误")
+			return errors.New("System ERROR, Try later!")
+		case "isv.AMOUNT_NOT_ENOUGH":
+			fmt.Println("余额不足，要充值！")
+			return errors.New("System ERROR, Try later!")
+		}
 	}
 	return nil
 }
