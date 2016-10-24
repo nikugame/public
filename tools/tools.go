@@ -51,6 +51,9 @@ func BuilderRandomString(stringType, length int) string {
 //StringJoin func(split string, str...string) string  字符串拼接封装方法
 func StringJoin(split string, str ...string) string {
 	list := []string(str)
+	if len(list) == 1 {
+		list = append(list, "")
+	}
 	return strings.Join(list, split)
 }
 

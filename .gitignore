@@ -26,3 +26,6 @@ _testmain.go
 /.vscode
 /.idea
 *.log
+/proto/nikugame.proto
+
+*.gitignore

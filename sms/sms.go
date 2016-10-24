@@ -18,24 +18,54 @@ import (
 )
 
 //SendMessage func(phone, code string) error Send SMS function
-func SendMessage(phone, code string) error {
+// func SendMessage(phone, code string) error {
+
+// 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
+// 	key := conf.DefaultInt("SMS::type", 1)
+
+// 	switch key {
+// 	case 1:
+// 		return beiwei(phone, code)
+// 	case 2:
+// 		return dayu(phone, code)
+// 	case 3:
+// 		return xiao(phone, code)
+// 	default:
+// 		return errors.New("error configure")
+// 	}
+// }
+
+//SendMessage func(str ..string) error phone, code, channel Send SMS function
+func SendMessage(str ...string) error {
+
+	list := []string(str)
+	if len(list) < 2 {
+		return errors.New("param error : 1:phone, 2:code, must, 3:channel, can use default")
+	}
+	phone := list[0]
+	code := list[1]
+	channel := "C0"
+	if len(list) > 2 {
+		channel = tools.StringJoin("", "C", list[2])
+	}
 
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 	key := conf.DefaultInt("SMS::type", 1)
 
 	switch key {
 	case 1:
-		return beiwei(phone, code)
+		return beiwei(phone, code, channel)
 	case 2:
-		return dayu(phone, code)
+		return dayu(phone, code, channel)
 	case 3:
-		return xiao(phone, code)
+		return xiao(phone, code, channel)
 	default:
 		return errors.New("error configure")
 	}
 }
 
-func xiao(phone, code string) error {
+//beiwei func(phone, code, channel string) error send sms use beiwei
+func xiao(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
 	u, _ := url.Parse(conf.String("XIAO::url"))
@@ -46,7 +76,7 @@ func xiao(phone, code string) error {
 	q.Set("expid", "0")
 	q.Set("encode", "utf-8")
 	decoder := mahonia.NewEncoder("utf-8")
-	q.Set("msg", decoder.ConvertString(strings.Replace(conf.String("XIAO::content"), "*", code, -1)))
+	q.Set("msg", decoder.ConvertString(strings.Replace(conf.String(tools.StringJoin("::", "XIAO", channel)), "*", code, -1)))
 	q.Set("mobile", phone)
 
 	u.RawQuery = q.Encode()
@@ -66,8 +96,8 @@ func xiao(phone, code string) error {
 	return errors.New("sms error")
 }
 
-//beiwei func(phone, code string) error send sms use beiwei
-func beiwei(phone, code string) error {
+//beiwei func(phone, code, channel string) error send sms use beiwei
+func beiwei(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
 	u, _ := url.Parse(conf.String("BEIWEI::url"))
@@ -79,7 +109,7 @@ func beiwei(phone, code string) error {
 	q.Set("sn", conf.String("BEIWEI::sn"))
 	q.Set("pwd", strings.ToUpper(tools.BuilderMD5(tools.StringJoin("", conf.String("BEIWEI::sn"), conf.String("BEIWEI::pwd")))))
 	q.Set("mobile", phone)
-	q.Set("content", decoder.ConvertString(strings.Replace(conf.String("BEIWEI::content"), "*", code, -1)))
+	q.Set("content", decoder.ConvertString(strings.Replace(conf.String(tools.StringJoin("::", "BEIWEI", channel)), "*", code, -1)))
 	q.Set("ext", conf.String("BEIWEI::ext"))
 	q.Set("stime", conf.DefaultString("BEIWEI::stime", ""))
 	q.Set("rrid", rrid)
@@ -100,8 +130,8 @@ func beiwei(phone, code string) error {
 	return nil
 }
 
-//dayu func(phone, code string) error send sms use dayu
-func dayu(phone, code string) error {
+//dayu func(phone, code, channel string) error send sms use dayu
+func dayu(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
 	var param struct {
@@ -123,7 +153,7 @@ func dayu(phone, code string) error {
 	m["sms_free_sign_name"] = conf.String("ALIDAYU::sign")
 	m["sms_param"] = string(str)
 	m["rec_num"] = phone
-	m["sms_template_code"] = conf.String("ALIDAYU::template")
+	m["sms_template_code"] = conf.String(tools.StringJoin("::", "ALIDAYU", channel))
 	m["sign"] = sign(m, conf.String("ALIDAYU::secert"))
 
 	v := url.Values{}
@@ -226,7 +256,7 @@ func dayu(phone, code string) error {
 			return errors.New("System ERROR, Try later!")
 		case "isp.SYSTEM_ERROR":
 			fmt.Println("大于挂了！改用其他通道发送")
-			return beiwei(phone, code)
+			return beiwei(phone, code, channel)
 		case "isv.BLACK_KEY_CONTROL_LIMIT":
 			fmt.Println("模板变量中存在黑名单关键字，大于后台配置错")
 			return errors.New("System ERROR, Try later!")
