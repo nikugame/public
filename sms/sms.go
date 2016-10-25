@@ -45,7 +45,7 @@ func SendMessage(str ...string) error {
 	phone := list[0]
 	code := list[1]
 	channel := "C0"
-	if len(list) > 2 {
+	if len(list) > 2 && list[2] != "" {
 		channel = tools.StringJoin("", "C", list[2])
 	}
 
