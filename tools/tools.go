@@ -69,3 +69,38 @@ func BuilderMD5(str string) string {
 	s := ctx.Sum(nil)
 	return hex.EncodeToString(s)
 }
+
+/**
+    Substr 截取字符串
+    str 字符串
+    start 开始位置
+    length 截取长度
+**/
+func Substr(str string, start int, length int) string {
+	rs := []rune(str)
+	rl := len(rs)
+	end := 0
+
+	if start < 0 {
+		start = rl - 1 + start
+	}
+	end = start + length
+
+	if start > end {
+		start, end = end, start
+	}
+
+	if start < 0 {
+		start = 0
+	}
+	if start > rl {
+		start = rl
+	}
+	if end < 0 {
+		end = 0
+	}
+	if end > rl {
+		end = rl
+	}
+	return string(rs[start:end])
+}
