@@ -1,5 +1,27 @@
 # golang service public model
 
+### 版本说明
+
+####1.1
+
+修正了sms配置参数的BUG， 支持变更签名，当渠道号为1时使用默认配置
+
+    [ALIDAYU]
+    url = ""
+    name = ""
+    key = ""
+    secert = ""
+    sign = ""
+    template = ""
+
+    [ALIDAYU:10]
+    url = ""
+    name = ""
+    key = ""
+    secert = ""
+    sign = ""
+    template = ""
+
 #### install
 
 go get -u github.com/nikugame/public
@@ -60,6 +82,46 @@ protobuffer的协议文件
     timeout = 180 ; 超时时间（秒)
 
 ##### sms 配置
+
+v1.1 版本更新
+
+    [SMS]
+    type = 2  ;type: 1, 北纬；2，阿里大于；3，希奥
+
+    [BEIWEI]
+    url = ""
+    sn = ""
+    pwd = ""
+    ext = ""
+    content = ""
+
+
+    [ALIDAYU]
+    url = ""
+    name = ""
+    key = ""
+    secert = ""
+    sign = ""
+    template = ""
+
+    [ALIDAYU:10]
+    url = ""
+    name = ""
+    key = ""
+    secert = ""
+    sign = ""
+    template = ""
+
+    [XIAO]
+    url = ""
+    uid = ""
+    cid = ""
+    pwd = ""
+    content = ""
+
+
+
+v1.0 版本更新
 
     [SMS]
     type = 1  ;type: 1, 北纬；2，阿里大于；3，希奥

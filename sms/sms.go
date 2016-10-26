@@ -44,9 +44,11 @@ func SendMessage(str ...string) error {
 	}
 	phone := list[0]
 	code := list[1]
-	channel := "C0"
-	if len(list) > 2 && list[2] != "" {
-		channel = tools.StringJoin("", "C", list[2])
+	channel := ""
+	if len(list) > 2 {
+		if !strings.EqualFold(list[2], "1") {
+			channel = list[2]
+		}
 	}
 
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
@@ -68,15 +70,20 @@ func SendMessage(str ...string) error {
 func xiao(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
-	u, _ := url.Parse(conf.String("XIAO::url"))
+	index := "XIAO"
+	if channel != "" {
+		index = fmt.Sprintf("XIAO:%s", channel)
+	}
+
+	u, _ := url.Parse(conf.String(fmt.Sprintf("%s::url", index)))
 	q := u.Query()
 
-	q.Set("uid", conf.String("XIAO::uid"))
-	q.Set("auth", tools.BuilderMD5(tools.StringJoin("", conf.String("XIAO::cid"), conf.String("XIAO::pwd"))))
+	q.Set("uid", conf.String(fmt.Sprintf("%s::uid", index)))
+	q.Set("auth", tools.BuilderMD5(tools.StringJoin("", conf.String(fmt.Sprintf("%s::cid", index)), conf.String(fmt.Sprintf("%s::pwd", index)))))
 	q.Set("expid", "0")
 	q.Set("encode", "utf-8")
 	decoder := mahonia.NewEncoder("utf-8")
-	q.Set("msg", decoder.ConvertString(strings.Replace(conf.String(tools.StringJoin("::", "XIAO", channel)), "*", code, -1)))
+	q.Set("msg", decoder.ConvertString(strings.Replace(conf.String(fmt.Sprintf("%s::content", index)), "*", code, -1)))
 	q.Set("mobile", phone)
 
 	u.RawQuery = q.Encode()
@@ -100,18 +107,23 @@ func xiao(phone, code, channel string) error {
 func beiwei(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
-	u, _ := url.Parse(conf.String("BEIWEI::url"))
+	index := "BEIWEI"
+	if channel != "" {
+		index = fmt.Sprintf("BEIWEI:%s", channel)
+	}
+
+	u, _ := url.Parse(conf.String(fmt.Sprintf("%s::url", index)))
 	q := u.Query()
 
 	decoder := mahonia.NewEncoder("GBK")
 	rrid := tools.BuilderRandomString(tools.NIKRandSringTypeAllCharacter, 8)
 
-	q.Set("sn", conf.String("BEIWEI::sn"))
-	q.Set("pwd", strings.ToUpper(tools.BuilderMD5(tools.StringJoin("", conf.String("BEIWEI::sn"), conf.String("BEIWEI::pwd")))))
+	q.Set("sn", conf.String(fmt.Sprintf("%s::sn", index)))
+	q.Set("pwd", strings.ToUpper(tools.BuilderMD5(tools.StringJoin("", conf.String(fmt.Sprintf("%s::sn", index)), conf.String(fmt.Sprintf("%s::pwd", index))))))
 	q.Set("mobile", phone)
-	q.Set("content", decoder.ConvertString(strings.Replace(conf.String(tools.StringJoin("::", "BEIWEI", channel)), "*", code, -1)))
-	q.Set("ext", conf.String("BEIWEI::ext"))
-	q.Set("stime", conf.DefaultString("BEIWEI::stime", ""))
+	q.Set("content", decoder.ConvertString(strings.Replace(conf.String(fmt.Sprintf("%s::content", index)), "*", code, -1)))
+	q.Set("ext", conf.String(fmt.Sprintf("%s::ext", index)))
+	q.Set("stime", conf.DefaultString(fmt.Sprintf("%s::stime", index), ""))
 	q.Set("rrid", rrid)
 
 	u.RawQuery = q.Encode()
@@ -134,27 +146,32 @@ func beiwei(phone, code, channel string) error {
 func dayu(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
+	index := "ALIDAYU"
+	if channel != "" {
+		index = fmt.Sprintf("ALIDAYU:%s", channel)
+	}
+
 	var param struct {
 		Code    string `json:"code"`
 		Product string `json:"product"`
 	}
 	param.Code = code
-	param.Product = conf.String("ALIDAYU::name")
+	param.Product = conf.String(fmt.Sprintf("%s::name", index))
 	str, _ := json.Marshal(param)
 
 	m := make(map[string]string)
-	m["app_key"] = conf.String("ALIDAYU::key")
+	m["app_key"] = conf.String(fmt.Sprintf("%s::key", index))
 	m["format"] = "json"
 	m["timestamp"] = tools.TimeStampString()
 	m["v"] = "2.0"
 	m["method"] = "alibaba.aliqin.fc.sms.num.send"
 	m["sign_method"] = "md5"
 	m["sms_type"] = "normal"
-	m["sms_free_sign_name"] = conf.String("ALIDAYU::sign")
+	m["sms_free_sign_name"] = conf.String(fmt.Sprintf("%s::sign", index))
 	m["sms_param"] = string(str)
 	m["rec_num"] = phone
-	m["sms_template_code"] = conf.String(tools.StringJoin("::", "ALIDAYU", channel))
-	m["sign"] = sign(m, conf.String("ALIDAYU::secert"))
+	m["sms_template_code"] = conf.String(fmt.Sprintf("%s::template", index))
+	m["sign"] = sign(m, conf.String(fmt.Sprintf("%s::secert", index)))
 
 	v := url.Values{}
 	for k, values := range m {
