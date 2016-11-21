@@ -29,6 +29,7 @@ func (s *Client) init() {
 		//logs.Info("没有设置kafka的主机或端口，使用配置文件。")
 		cf, _ := conf.NewConfig("ini", "conf/settings.conf")
 		s.Addrs = cf.Strings("MqServer::addrs")
+		fmt.Println(s.Addrs)
 		// s.connString = cf.String("MqServer::Host") + ":" + cf.String("MqServer::Port")
 		//logs.Info("连接字符串为：%s", s.Addrs)
 	}
