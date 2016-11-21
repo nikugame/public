@@ -39,7 +39,8 @@ func (s *Client) init() {
 func (s *Client) Send() (int32, int64, error) {
 	s.init()
 	var err error
-	s.Producer, err = sarama.NewSyncProducer(s.Addrs, s.config)
+	cf, _ := conf.NewConfig("ini", "conf/settings.conf")
+	s.Producer, err = sarama.NewSyncProducer([]string{cf.String("MqServer::addrs")}, s.config)
 	if err != nil {
 		fmt.Println(err)
 	}
