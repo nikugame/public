@@ -13,11 +13,9 @@ type MsgContent struct {
 }
 
 type Client struct {
-	Host        string
-	Port        string
+	Addrs       []string
 	Producer    sarama.SyncProducer
 	AsyncEnable bool
-	connString  string
 	config      *sarama.Config
 	MsgContent  MsgContent
 }
@@ -26,13 +24,12 @@ func (s *Client) init() {
 	s.config = sarama.NewConfig()
 	s.config.Producer.RequiredAcks = sarama.WaitForAll
 	s.config.Producer.Partitioner = sarama.NewRandomPartitioner
-	if s.Host == "" || s.Port == "" {
+	if len(s.Addrs) == 0 {
 		logs.Info("没有设置kafka的主机或端口，使用配置文件。")
 		cf, _ := conf.NewConfig("ini", "conf/settings.conf")
-		s.connString = cf.String("MqServer::Host") + ":" + cf.String("MqServer::Port")
-		logs.Info("连接字符串为：%s", s.connString)
-	} else {
-		s.connString = s.Host + ":" + s.Port
+		s.Addrs = cf.Strings("MqServer::addrs")
+		// s.connString = cf.String("MqServer::Host") + ":" + cf.String("MqServer::Port")
+		logs.Info("连接字符串为：%s", s.Addrs)
 	}
 }
 
@@ -40,7 +37,7 @@ func (s *Client) init() {
 func (s *Client) Send() (int32, int64, error) {
 	s.init()
 	var err error
-	s.Producer, err = sarama.NewSyncProducer([]string{s.connString}, s.config)
+	s.Producer, err = sarama.NewSyncProducer(s.Addrs, s.config)
 	if err != nil {
 		logs.Error(err)
 	}
