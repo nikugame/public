@@ -1,8 +1,9 @@
 package mq
 
 import (
+	"fmt"
+
 	"github.com/Shopify/sarama"
-	"github.com/astaxie/beego/logs"
 	conf "github.com/nikugame/public/config"
 )
 
@@ -25,11 +26,11 @@ func (s *Client) init() {
 	s.config.Producer.RequiredAcks = sarama.WaitForAll
 	s.config.Producer.Partitioner = sarama.NewRandomPartitioner
 	if len(s.Addrs) == 0 {
-		logs.Info("没有设置kafka的主机或端口，使用配置文件。")
+		//logs.Info("没有设置kafka的主机或端口，使用配置文件。")
 		cf, _ := conf.NewConfig("ini", "conf/settings.conf")
 		s.Addrs = cf.Strings("MqServer::addrs")
 		// s.connString = cf.String("MqServer::Host") + ":" + cf.String("MqServer::Port")
-		logs.Info("连接字符串为：%s", s.Addrs)
+		//logs.Info("连接字符串为：%s", s.Addrs)
 	}
 }
 
@@ -39,7 +40,7 @@ func (s *Client) Send() (int32, int64, error) {
 	var err error
 	s.Producer, err = sarama.NewSyncProducer(s.Addrs, s.config)
 	if err != nil {
-		logs.Error(err)
+		fmt.Println(err)
 	}
 	defer s.Producer.Close()
 	return s.Producer.SendMessage(s.msg())
@@ -50,7 +51,7 @@ func (s *Client) msg() *sarama.ProducerMessage {
 	if s.MsgContent.MsgType != "" {
 		msg.Topic = s.MsgContent.MsgType
 	} else {
-		logs.Error("Topic is empty!")
+		fmt.Println("Topic is empty!")
 	}
 	msg.Partition = int32(-1)
 	if s.MsgContent.Key != "" {
