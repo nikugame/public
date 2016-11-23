@@ -5,6 +5,8 @@ import (
 
 	"time"
 
+	"strings"
+
 	"github.com/Shopify/sarama"
 	conf "github.com/nikugame/public/config"
 )
@@ -17,7 +19,7 @@ type MsgContent struct {
 }
 
 type Client struct {
-	Addrs       []string
+	Addrs       string
 	Producer    sarama.SyncProducer
 	AsyncEnable bool
 	config      *sarama.Config
@@ -31,7 +33,7 @@ func (s *Client) init() {
 	if len(s.Addrs) == 0 {
 		//logs.Info("没有设置kafka的主机或端口，使用配置文件。")
 		cf, _ := conf.NewConfig("ini", "conf/settings.conf")
-		s.Addrs = cf.Strings("MqServer::addrs")
+		s.Addrs = cf.String("MqServer::addrs")
 		//fmt.Println(s.Addrs)
 		// s.connString = cf.String("MqServer::Host") + ":" + cf.String("MqServer::Port")
 		//logs.Info("连接字符串为：%s", s.Addrs)
@@ -42,7 +44,7 @@ func (s *Client) init() {
 func (s *Client) Send() (int32, int64, error) {
 	s.init()
 	var err error
-	s.Producer, err = sarama.NewSyncProducer(s.Addrs, s.config)
+	s.Producer, err = sarama.NewSyncProducer(strings.Split(s.Addrs, ","), s.config)
 	if err != nil {
 		fmt.Println(err)
 	}
