@@ -12,10 +12,9 @@ import (
 )
 
 type MsgContent struct {
-	Content   string //内容
-	MsgType   string //消息类型,充值、登录等等
-	Key       string
-	Timestamp time.Time
+	Content string //内容
+	MsgType string //消息类型,充值、登录等等
+	Key     string
 }
 
 type Client struct {
@@ -60,10 +59,7 @@ func (s *Client) msg() *sarama.ProducerMessage {
 		fmt.Println("Topic is empty!")
 	}
 	// msg.Partition = int32(-1)
-	if !s.MsgContent.Timestamp.IsZero() {
-		msg.Timestamp = s.MsgContent.Timestamp
-	}
-
+	msg.Timestamp = time.Now().Local()
 	if s.MsgContent.Key != "" {
 		msg.Key = sarama.StringEncoder(s.MsgContent.Key)
 	}
