@@ -65,7 +65,6 @@ message DeviceInfo {
     string OS = 8; //系统类型
     string Latitude = 9; //纬度
     string Longitude = 10; //经度
-    string DeviceId     = 11;   //设备id
 }
 
 //注册普通账号

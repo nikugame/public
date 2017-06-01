@@ -9,6 +9,7 @@ It is generated from these files:
 	LoginProto.proto
 
 It has these top-level messages:
+	HeartBeatRequest
 	CertificateRequest
 	CertificateReply
 	DeviceInfo
@@ -23,7 +24,6 @@ It has these top-level messages:
 	BindingAccountRequest
 	ChangePassWordRequest
 	WeixinLoginRequest
-	HeartBeatMsg
 */
 package SDKProto
 
@@ -47,17 +47,50 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+// 心跳
+type HeartBeatRequest struct {
+	DeviceId   string      `protobuf:"bytes,1,opt,name=DeviceId,json=deviceId" json:"DeviceId,omitempty"`
+	UUID       string      `protobuf:"bytes,2,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
+}
+
+func (m *HeartBeatRequest) Reset()                    { *m = HeartBeatRequest{} }
+func (m *HeartBeatRequest) String() string            { return proto.CompactTextString(m) }
+func (*HeartBeatRequest) ProtoMessage()               {}
+func (*HeartBeatRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
+func (m *HeartBeatRequest) GetDeviceId() string {
+	if m != nil {
+		return m.DeviceId
+	}
+	return ""
+}
+
+func (m *HeartBeatRequest) GetUUID() string {
+	if m != nil {
+		return m.UUID
+	}
+	return ""
+}
+
+func (m *HeartBeatRequest) GetDeviceInfo() *DeviceInfo {
+	if m != nil {
+		return m.DeviceInfo
+	}
+	return nil
+}
+
 type CertificateRequest struct {
-	UUID          string `protobuf:"bytes,1,opt,name=UUID" json:"UUID,omitempty"`
-	Type          int32  `protobuf:"varint,2,opt,name=Type" json:"Type,omitempty"`
-	Name          string `protobuf:"bytes,3,opt,name=Name" json:"Name,omitempty"`
-	CertificateID string `protobuf:"bytes,4,opt,name=CertificateID" json:"CertificateID,omitempty"`
+	UUID          string `protobuf:"bytes,1,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	Type          int32  `protobuf:"varint,2,opt,name=Type,json=type" json:"Type,omitempty"`
+	Name          string `protobuf:"bytes,3,opt,name=Name,json=name" json:"Name,omitempty"`
+	CertificateID string `protobuf:"bytes,4,opt,name=CertificateID,json=certificateID" json:"CertificateID,omitempty"`
 }
 
 func (m *CertificateRequest) Reset()                    { *m = CertificateRequest{} }
 func (m *CertificateRequest) String() string            { return proto.CompactTextString(m) }
 func (*CertificateRequest) ProtoMessage()               {}
-func (*CertificateRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*CertificateRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 func (m *CertificateRequest) GetUUID() string {
 	if m != nil {
@@ -88,14 +121,14 @@ func (m *CertificateRequest) GetCertificateID() string {
 }
 
 type CertificateReply struct {
-	Result  bool   `protobuf:"varint,1,opt,name=Result" json:"Result,omitempty"`
-	Comment string `protobuf:"bytes,2,opt,name=Comment" json:"Comment,omitempty"`
+	Result  bool   `protobuf:"varint,1,opt,name=Result,json=result" json:"Result,omitempty"`
+	Comment string `protobuf:"bytes,2,opt,name=Comment,json=comment" json:"Comment,omitempty"`
 }
 
 func (m *CertificateReply) Reset()                    { *m = CertificateReply{} }
 func (m *CertificateReply) String() string            { return proto.CompactTextString(m) }
 func (*CertificateReply) ProtoMessage()               {}
-func (*CertificateReply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*CertificateReply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
 func (m *CertificateReply) GetResult() bool {
 	if m != nil {
@@ -112,22 +145,22 @@ func (m *CertificateReply) GetComment() string {
 }
 
 type DeviceInfo struct {
-	GameID     string `protobuf:"bytes,1,opt,name=GameID" json:"GameID,omitempty"`
-	Channel    string `protobuf:"bytes,2,opt,name=Channel" json:"Channel,omitempty"`
-	DeviceType string `protobuf:"bytes,3,opt,name=DeviceType" json:"DeviceType,omitempty"`
-	IMEI       string `protobuf:"bytes,4,opt,name=IMEI" json:"IMEI,omitempty"`
-	MAC        string `protobuf:"bytes,5,opt,name=MAC" json:"MAC,omitempty"`
-	IPv4       string `protobuf:"bytes,6,opt,name=IPv4" json:"IPv4,omitempty"`
-	IPv6       string `protobuf:"bytes,7,opt,name=IPv6" json:"IPv6,omitempty"`
-	OS         string `protobuf:"bytes,8,opt,name=OS" json:"OS,omitempty"`
-	Latitude   string `protobuf:"bytes,9,opt,name=Latitude" json:"Latitude,omitempty"`
-	Longitude  string `protobuf:"bytes,10,opt,name=Longitude" json:"Longitude,omitempty"`
+	GameID     string `protobuf:"bytes,1,opt,name=GameID,json=gameID" json:"GameID,omitempty"`
+	Channel    string `protobuf:"bytes,2,opt,name=Channel,json=channel" json:"Channel,omitempty"`
+	DeviceType string `protobuf:"bytes,3,opt,name=DeviceType,json=deviceType" json:"DeviceType,omitempty"`
+	IMEI       string `protobuf:"bytes,4,opt,name=IMEI,json=iMEI" json:"IMEI,omitempty"`
+	MAC        string `protobuf:"bytes,5,opt,name=MAC,json=mAC" json:"MAC,omitempty"`
+	IPv4       string `protobuf:"bytes,6,opt,name=IPv4,json=iPv4" json:"IPv4,omitempty"`
+	IPv6       string `protobuf:"bytes,7,opt,name=IPv6,json=iPv6" json:"IPv6,omitempty"`
+	OS         string `protobuf:"bytes,8,opt,name=OS,json=oS" json:"OS,omitempty"`
+	Latitude   string `protobuf:"bytes,9,opt,name=Latitude,json=latitude" json:"Latitude,omitempty"`
+	Longitude  string `protobuf:"bytes,10,opt,name=Longitude,json=longitude" json:"Longitude,omitempty"`
 }
 
 func (m *DeviceInfo) Reset()                    { *m = DeviceInfo{} }
 func (m *DeviceInfo) String() string            { return proto.CompactTextString(m) }
 func (*DeviceInfo) ProtoMessage()               {}
-func (*DeviceInfo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+func (*DeviceInfo) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 func (m *DeviceInfo) GetGameID() string {
 	if m != nil {
@@ -201,15 +234,15 @@ func (m *DeviceInfo) GetLongitude() string {
 
 // 注册普通账号
 type RegisterRequest struct {
-	UserName   string      `protobuf:"bytes,1,opt,name=UserName" json:"UserName,omitempty"`
-	PassWord   string      `protobuf:"bytes,2,opt,name=PassWord" json:"PassWord,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	UserName   string      `protobuf:"bytes,1,opt,name=UserName,json=userName" json:"UserName,omitempty"`
+	PassWord   string      `protobuf:"bytes,2,opt,name=PassWord,json=passWord" json:"PassWord,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *RegisterRequest) Reset()                    { *m = RegisterRequest{} }
 func (m *RegisterRequest) String() string            { return proto.CompactTextString(m) }
 func (*RegisterRequest) ProtoMessage()               {}
-func (*RegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
+func (*RegisterRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
 
 func (m *RegisterRequest) GetUserName() string {
 	if m != nil {
@@ -234,15 +267,15 @@ func (m *RegisterRequest) GetDeviceInfo() *DeviceInfo {
 
 // 普通账号登陆
 type AccountLoginRequest struct {
-	UserName   string      `protobuf:"bytes,1,opt,name=UserName" json:"UserName,omitempty"`
-	PassWord   string      `protobuf:"bytes,2,opt,name=PassWord" json:"PassWord,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	UserName   string      `protobuf:"bytes,1,opt,name=UserName,json=userName" json:"UserName,omitempty"`
+	PassWord   string      `protobuf:"bytes,2,opt,name=PassWord,json=passWord" json:"PassWord,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *AccountLoginRequest) Reset()                    { *m = AccountLoginRequest{} }
 func (m *AccountLoginRequest) String() string            { return proto.CompactTextString(m) }
 func (*AccountLoginRequest) ProtoMessage()               {}
-func (*AccountLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{4} }
+func (*AccountLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
 
 func (m *AccountLoginRequest) GetUserName() string {
 	if m != nil {
@@ -267,15 +300,15 @@ func (m *AccountLoginRequest) GetDeviceInfo() *DeviceInfo {
 
 // 手机号码登录
 type PhoneLoginRequest struct {
-	Phone      string      `protobuf:"bytes,1,opt,name=Phone" json:"Phone,omitempty"`
-	Code       string      `protobuf:"bytes,2,opt,name=Code" json:"Code,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	Phone      string      `protobuf:"bytes,1,opt,name=Phone,json=phone" json:"Phone,omitempty"`
+	Code       string      `protobuf:"bytes,2,opt,name=Code,json=code" json:"Code,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *PhoneLoginRequest) Reset()                    { *m = PhoneLoginRequest{} }
 func (m *PhoneLoginRequest) String() string            { return proto.CompactTextString(m) }
 func (*PhoneLoginRequest) ProtoMessage()               {}
-func (*PhoneLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{5} }
+func (*PhoneLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
 
 func (m *PhoneLoginRequest) GetPhone() string {
 	if m != nil {
@@ -299,17 +332,17 @@ func (m *PhoneLoginRequest) GetDeviceInfo() *DeviceInfo {
 }
 
 type LoginReply struct {
-	UUID         string `protobuf:"bytes,1,opt,name=UUID" json:"UUID,omitempty"`
-	AutoCode     string `protobuf:"bytes,2,opt,name=AutoCode" json:"AutoCode,omitempty"`
-	Token        string `protobuf:"bytes,3,opt,name=Token" json:"Token,omitempty"`
-	Phone        string `protobuf:"bytes,4,opt,name=Phone" json:"Phone,omitempty"`
-	Certificated bool   `protobuf:"varint,5,opt,name=Certificated" json:"Certificated,omitempty"`
+	UUID         string `protobuf:"bytes,1,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	AutoCode     string `protobuf:"bytes,2,opt,name=AutoCode,json=autoCode" json:"AutoCode,omitempty"`
+	Token        string `protobuf:"bytes,3,opt,name=Token,json=token" json:"Token,omitempty"`
+	Phone        string `protobuf:"bytes,4,opt,name=Phone,json=phone" json:"Phone,omitempty"`
+	Certificated bool   `protobuf:"varint,5,opt,name=Certificated,json=certificated" json:"Certificated,omitempty"`
 }
 
 func (m *LoginReply) Reset()                    { *m = LoginReply{} }
 func (m *LoginReply) String() string            { return proto.CompactTextString(m) }
 func (*LoginReply) ProtoMessage()               {}
-func (*LoginReply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{6} }
+func (*LoginReply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
 
 func (m *LoginReply) GetUUID() string {
 	if m != nil {
@@ -348,14 +381,14 @@ func (m *LoginReply) GetCertificated() bool {
 
 // 发送手机验证码
 type AuthCodeRequest struct {
-	Phone      string      `protobuf:"bytes,1,opt,name=Phone" json:"Phone,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,2,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	Phone      string      `protobuf:"bytes,1,opt,name=Phone,json=phone" json:"Phone,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,2,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *AuthCodeRequest) Reset()                    { *m = AuthCodeRequest{} }
 func (m *AuthCodeRequest) String() string            { return proto.CompactTextString(m) }
 func (*AuthCodeRequest) ProtoMessage()               {}
-func (*AuthCodeRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{7} }
+func (*AuthCodeRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
 
 func (m *AuthCodeRequest) GetPhone() string {
 	if m != nil {
@@ -372,13 +405,13 @@ func (m *AuthCodeRequest) GetDeviceInfo() *DeviceInfo {
 }
 
 type Reply struct {
-	Result bool `protobuf:"varint,1,opt,name=Result" json:"Result,omitempty"`
+	Result bool `protobuf:"varint,1,opt,name=Result,json=result" json:"Result,omitempty"`
 }
 
 func (m *Reply) Reset()                    { *m = Reply{} }
 func (m *Reply) String() string            { return proto.CompactTextString(m) }
 func (*Reply) ProtoMessage()               {}
-func (*Reply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{8} }
+func (*Reply) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
 
 func (m *Reply) GetResult() bool {
 	if m != nil {
@@ -389,15 +422,15 @@ func (m *Reply) GetResult() bool {
 
 // 自动登陆
 type AutoLoginRequest struct {
-	AutoCode   string      `protobuf:"bytes,1,opt,name=AutoCode" json:"AutoCode,omitempty"`
-	UUID       string      `protobuf:"bytes,2,opt,name=UUID" json:"UUID,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	AutoCode   string      `protobuf:"bytes,1,opt,name=AutoCode,json=autoCode" json:"AutoCode,omitempty"`
+	UUID       string      `protobuf:"bytes,2,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *AutoLoginRequest) Reset()                    { *m = AutoLoginRequest{} }
 func (m *AutoLoginRequest) String() string            { return proto.CompactTextString(m) }
 func (*AutoLoginRequest) ProtoMessage()               {}
-func (*AutoLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{9} }
+func (*AutoLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
 
 func (m *AutoLoginRequest) GetAutoCode() string {
 	if m != nil {
@@ -422,16 +455,16 @@ func (m *AutoLoginRequest) GetDeviceInfo() *DeviceInfo {
 
 // 账号绑定手机号码
 type BindingPhoneRequest struct {
-	Phone      string      `protobuf:"bytes,1,opt,name=Phone" json:"Phone,omitempty"`
-	UUID       string      `protobuf:"bytes,2,opt,name=UUID" json:"UUID,omitempty"`
-	AuthCode   string      `protobuf:"bytes,3,opt,name=AuthCode" json:"AuthCode,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,4,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	Phone      string      `protobuf:"bytes,1,opt,name=Phone,json=phone" json:"Phone,omitempty"`
+	UUID       string      `protobuf:"bytes,2,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	AuthCode   string      `protobuf:"bytes,3,opt,name=AuthCode,json=authCode" json:"AuthCode,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,4,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *BindingPhoneRequest) Reset()                    { *m = BindingPhoneRequest{} }
 func (m *BindingPhoneRequest) String() string            { return proto.CompactTextString(m) }
 func (*BindingPhoneRequest) ProtoMessage()               {}
-func (*BindingPhoneRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{10} }
+func (*BindingPhoneRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
 
 func (m *BindingPhoneRequest) GetPhone() string {
 	if m != nil {
@@ -463,17 +496,17 @@ func (m *BindingPhoneRequest) GetDeviceInfo() *DeviceInfo {
 
 // 绑定普通账号
 type BindingAccountRequest struct {
-	AutoCode   string      `protobuf:"bytes,1,opt,name=AutoCode" json:"AutoCode,omitempty"`
-	UserName   string      `protobuf:"bytes,2,opt,name=UserName" json:"UserName,omitempty"`
-	PassWord   string      `protobuf:"bytes,3,opt,name=PassWord" json:"PassWord,omitempty"`
-	UUID       string      `protobuf:"bytes,4,opt,name=UUID" json:"UUID,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,5,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	AutoCode   string      `protobuf:"bytes,1,opt,name=AutoCode,json=autoCode" json:"AutoCode,omitempty"`
+	UserName   string      `protobuf:"bytes,2,opt,name=UserName,json=userName" json:"UserName,omitempty"`
+	PassWord   string      `protobuf:"bytes,3,opt,name=PassWord,json=passWord" json:"PassWord,omitempty"`
+	UUID       string      `protobuf:"bytes,4,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,5,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *BindingAccountRequest) Reset()                    { *m = BindingAccountRequest{} }
 func (m *BindingAccountRequest) String() string            { return proto.CompactTextString(m) }
 func (*BindingAccountRequest) ProtoMessage()               {}
-func (*BindingAccountRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{11} }
+func (*BindingAccountRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
 
 func (m *BindingAccountRequest) GetAutoCode() string {
 	if m != nil {
@@ -512,15 +545,15 @@ func (m *BindingAccountRequest) GetDeviceInfo() *DeviceInfo {
 
 // 修改密码
 type ChangePassWordRequest struct {
-	PassWord   string      `protobuf:"bytes,1,opt,name=PassWord" json:"PassWord,omitempty"`
-	UUID       string      `protobuf:"bytes,2,opt,name=UUID" json:"UUID,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	PassWord   string      `protobuf:"bytes,1,opt,name=PassWord,json=passWord" json:"PassWord,omitempty"`
+	UUID       string      `protobuf:"bytes,2,opt,name=UUID,json=uUID" json:"UUID,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,3,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *ChangePassWordRequest) Reset()                    { *m = ChangePassWordRequest{} }
 func (m *ChangePassWordRequest) String() string            { return proto.CompactTextString(m) }
 func (*ChangePassWordRequest) ProtoMessage()               {}
-func (*ChangePassWordRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{12} }
+func (*ChangePassWordRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
 
 func (m *ChangePassWordRequest) GetPassWord() string {
 	if m != nil {
@@ -546,13 +579,13 @@ func (m *ChangePassWordRequest) GetDeviceInfo() *DeviceInfo {
 // 微信登陆
 type WeixinLoginRequest struct {
 	Code       string      `protobuf:"bytes,1,opt,name=code" json:"code,omitempty"`
-	DeviceInfo *DeviceInfo `protobuf:"bytes,2,opt,name=DeviceInfo" json:"DeviceInfo,omitempty"`
+	DeviceInfo *DeviceInfo `protobuf:"bytes,2,opt,name=DeviceInfo,json=deviceInfo" json:"DeviceInfo,omitempty"`
 }
 
 func (m *WeixinLoginRequest) Reset()                    { *m = WeixinLoginRequest{} }
 func (m *WeixinLoginRequest) String() string            { return proto.CompactTextString(m) }
 func (*WeixinLoginRequest) ProtoMessage()               {}
-func (*WeixinLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{13} }
+func (*WeixinLoginRequest) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
 
 func (m *WeixinLoginRequest) GetCode() string {
 	if m != nil {
@@ -568,32 +601,8 @@ func (m *WeixinLoginRequest) GetDeviceInfo() *DeviceInfo {
 	return nil
 }
 
-// 心跳
-type HeartBeatMsg struct {
-	DeviceId string `protobuf:"bytes,1,opt,name=DeviceId" json:"DeviceId,omitempty"`
-	UserId   string `protobuf:"bytes,2,opt,name=UserId" json:"UserId,omitempty"`
-}
-
-func (m *HeartBeatMsg) Reset()                    { *m = HeartBeatMsg{} }
-func (m *HeartBeatMsg) String() string            { return proto.CompactTextString(m) }
-func (*HeartBeatMsg) ProtoMessage()               {}
-func (*HeartBeatMsg) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{14} }
-
-func (m *HeartBeatMsg) GetDeviceId() string {
-	if m != nil {
-		return m.DeviceId
-	}
-	return ""
-}
-
-func (m *HeartBeatMsg) GetUserId() string {
-	if m != nil {
-		return m.UserId
-	}
-	return ""
-}
-
 func init() {
+	proto.RegisterType((*HeartBeatRequest)(nil), "SDKProto.HeartBeatRequest")
 	proto.RegisterType((*CertificateRequest)(nil), "SDKProto.CertificateRequest")
 	proto.RegisterType((*CertificateReply)(nil), "SDKProto.CertificateReply")
 	proto.RegisterType((*DeviceInfo)(nil), "SDKProto.DeviceInfo")
@@ -608,7 +617,6 @@ func init() {
 	proto.RegisterType((*BindingAccountRequest)(nil), "SDKProto.BindingAccountRequest")
 	proto.RegisterType((*ChangePassWordRequest)(nil), "SDKProto.ChangePassWordRequest")
 	proto.RegisterType((*WeixinLoginRequest)(nil), "SDKProto.WeixinLoginRequest")
-	proto.RegisterType((*HeartBeatMsg)(nil), "SDKProto.HeartBeatMsg")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -632,7 +640,7 @@ type LoginClient interface {
 	ChangePassword(ctx context.Context, in *ChangePassWordRequest, opts ...grpc.CallOption) (*Reply, error)
 	LoginByWeiXin(ctx context.Context, in *WeixinLoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
 	CertificateID(ctx context.Context, in *CertificateRequest, opts ...grpc.CallOption) (*CertificateReply, error)
-	HeartBeat(ctx context.Context, in *HeartBeatMsg, opts ...grpc.CallOption) (*Reply, error)
+	HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*Reply, error)
 }
 
 type loginClient struct {
@@ -733,7 +741,7 @@ func (c *loginClient) CertificateID(ctx context.Context, in *CertificateRequest,
 	return out, nil
 }
 
-func (c *loginClient) HeartBeat(ctx context.Context, in *HeartBeatMsg, opts ...grpc.CallOption) (*Reply, error) {
+func (c *loginClient) HeartBeat(ctx context.Context, in *HeartBeatRequest, opts ...grpc.CallOption) (*Reply, error) {
 	out := new(Reply)
 	err := grpc.Invoke(ctx, "/SDKProto.Login/HeartBeat", in, out, c.cc, opts...)
 	if err != nil {
@@ -755,7 +763,7 @@ type LoginServer interface {
 	ChangePassword(context.Context, *ChangePassWordRequest) (*Reply, error)
 	LoginByWeiXin(context.Context, *WeixinLoginRequest) (*LoginReply, error)
 	CertificateID(context.Context, *CertificateRequest) (*CertificateReply, error)
-	HeartBeat(context.Context, *HeartBeatMsg) (*Reply, error)
+	HeartBeat(context.Context, *HeartBeatRequest) (*Reply, error)
 }
 
 func RegisterLoginServer(s *grpc.Server, srv LoginServer) {
@@ -943,7 +951,7 @@ func _Login_CertificateID_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Login_HeartBeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HeartBeatMsg)
+	in := new(HeartBeatRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -955,7 +963,7 @@ func _Login_HeartBeat_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/SDKProto.Login/HeartBeat",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LoginServer).HeartBeat(ctx, req.(*HeartBeatMsg))
+		return srv.(LoginServer).HeartBeat(ctx, req.(*HeartBeatRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1016,56 +1024,58 @@ var _Login_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("LoginProto.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 807 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x56, 0x4d, 0x4f, 0xdb, 0x4c,
-	0x10, 0xc6, 0x21, 0x09, 0xce, 0xbc, 0x01, 0xf2, 0x2e, 0x1f, 0x32, 0x2e, 0x2d, 0xc8, 0xea, 0x81,
-	0x53, 0xa4, 0x52, 0x84, 0x7a, 0xa9, 0xaa, 0x7c, 0x20, 0x1a, 0x01, 0x25, 0x32, 0x20, 0x7a, 0x69,
-	0x25, 0xd7, 0x59, 0x8c, 0x05, 0xb1, 0x69, 0xbc, 0x49, 0xe1, 0x50, 0xf5, 0xd0, 0x6b, 0x2f, 0xfd,
-	0x31, 0xfd, 0x35, 0xfd, 0x1f, 0x3d, 0x57, 0x3b, 0x5e, 0xdb, 0xeb, 0xc4, 0xa6, 0x11, 0x3d, 0xf4,
-	0x12, 0xed, 0xcc, 0x4e, 0x66, 0x9e, 0x67, 0xf6, 0x99, 0x91, 0xa1, 0x76, 0xe8, 0x3b, 0xae, 0xd7,
-	0x1d, 0xf8, 0xcc, 0xaf, 0xdf, 0xf0, 0x5f, 0xa2, 0x9e, 0xb4, 0x0f, 0xd0, 0x36, 0x46, 0x40, 0x5a,
-	0x74, 0xc0, 0xdc, 0x0b, 0xd7, 0xb6, 0x18, 0x35, 0xe9, 0xc7, 0x21, 0x0d, 0x18, 0x21, 0x50, 0x3c,
-	0x3b, 0xeb, 0xb4, 0x35, 0x65, 0x53, 0xd9, 0xaa, 0x98, 0x78, 0xe6, 0xbe, 0xd3, 0xbb, 0x1b, 0xaa,
-	0x15, 0x36, 0x95, 0xad, 0x92, 0x89, 0x67, 0xee, 0x7b, 0x63, 0xf5, 0xa9, 0x36, 0x1b, 0xc6, 0xf1,
-	0x33, 0x79, 0x0a, 0xf3, 0x52, 0xc6, 0x4e, 0x5b, 0x2b, 0xe2, 0x65, 0xda, 0x69, 0xb4, 0xa1, 0x96,
-	0xaa, 0x7b, 0x73, 0x7d, 0x47, 0x56, 0xa1, 0x6c, 0xd2, 0x60, 0x78, 0xcd, 0xb0, 0xae, 0x6a, 0x0a,
-	0x8b, 0x68, 0x30, 0xd7, 0xf2, 0xfb, 0x7d, 0xea, 0x31, 0x2c, 0x5e, 0x31, 0x23, 0xd3, 0xf8, 0xa5,
-	0x00, 0xb4, 0xe9, 0xc8, 0xb5, 0x69, 0xc7, 0xbb, 0xf0, 0x79, 0x82, 0x7d, 0xab, 0x4f, 0x63, 0xe0,
-	0xc2, 0xc2, 0x04, 0x97, 0x96, 0xe7, 0xd1, 0xeb, 0x38, 0x41, 0x68, 0x92, 0x27, 0xd1, 0xff, 0x91,
-	0x5a, 0x48, 0x43, 0xf2, 0x70, 0x82, 0x9d, 0xa3, 0xbd, 0x8e, 0xe0, 0x80, 0x67, 0x52, 0x83, 0xd9,
-	0xa3, 0x46, 0x4b, 0x2b, 0xa1, 0x8b, 0x1f, 0x31, 0xaa, 0x3b, 0xda, 0xd1, 0xca, 0x22, 0xaa, 0x3b,
-	0xda, 0x11, 0xbe, 0x5d, 0x6d, 0x2e, 0xf6, 0xed, 0x92, 0x05, 0x28, 0x1c, 0x9f, 0x68, 0x2a, 0x7a,
-	0x0a, 0xc7, 0x27, 0x44, 0x07, 0xf5, 0xd0, 0x62, 0x2e, 0x1b, 0xf6, 0xa8, 0x56, 0x41, 0x6f, 0x6c,
-	0x93, 0x75, 0xa8, 0x1c, 0xfa, 0x9e, 0x13, 0x5e, 0x02, 0x5e, 0x26, 0x0e, 0xe3, 0x0b, 0x2c, 0x9a,
-	0xd4, 0x71, 0x03, 0x46, 0x07, 0xd1, 0x9b, 0xe9, 0xa0, 0x9e, 0x05, 0x74, 0x80, 0xef, 0x11, 0xd2,
-	0x8f, 0x6d, 0x7e, 0xd7, 0xb5, 0x82, 0xe0, 0xdc, 0x1f, 0xf4, 0x44, 0x07, 0x62, 0x9b, 0xec, 0xc8,
-	0x2d, 0xc4, 0x16, 0xfc, 0xb7, 0xbd, 0x5c, 0x8f, 0x04, 0x52, 0x4f, 0xee, 0x4c, 0x29, 0xce, 0xf8,
-	0xaa, 0xc0, 0x52, 0xc3, 0xb6, 0xfd, 0xa1, 0xc7, 0x50, 0x5d, 0xff, 0x06, 0x45, 0x00, 0xff, 0x77,
-	0x2f, 0x7d, 0x8f, 0xa6, 0x20, 0x2c, 0x43, 0x09, 0x9d, 0xa2, 0x7e, 0x68, 0xf0, 0xf7, 0x68, 0xf9,
-	0x3d, 0x2a, 0x0a, 0xe3, 0xf9, 0x81, 0x45, 0xbf, 0x29, 0x00, 0xa2, 0x20, 0x57, 0x6d, 0xd6, 0xac,
-	0xe8, 0xa0, 0x36, 0x86, 0xcc, 0x97, 0x0a, 0xc6, 0x36, 0x87, 0x77, 0xea, 0x5f, 0x51, 0x4f, 0xa8,
-	0x2d, 0x34, 0x12, 0xd0, 0x45, 0x19, 0xb4, 0x01, 0x55, 0x69, 0x4a, 0x7a, 0xa8, 0x39, 0xd5, 0x4c,
-	0xf9, 0x8c, 0x77, 0xb0, 0xd8, 0x18, 0xb2, 0x4b, 0x9e, 0xfb, 0xfe, 0x0e, 0xa4, 0xd9, 0x16, 0xa6,
-	0x64, 0xbb, 0x01, 0xa5, 0x7b, 0xa7, 0xd3, 0xb8, 0x85, 0x1a, 0xe7, 0x36, 0xae, 0x82, 0x98, 0xbf,
-	0x32, 0xc6, 0x3f, 0xea, 0x57, 0x41, 0xea, 0xd7, 0xc3, 0x1e, 0xe2, 0xbb, 0x02, 0x4b, 0x4d, 0xd7,
-	0xeb, 0xb9, 0x9e, 0x83, 0x0c, 0xff, 0x28, 0x80, 0x89, 0xba, 0x21, 0x4e, 0xec, 0x9d, 0x78, 0x8e,
-	0xd8, 0x1e, 0xc3, 0x54, 0x9c, 0x12, 0xd3, 0x0f, 0x05, 0x56, 0x04, 0x26, 0x31, 0x1e, 0xd3, 0xf4,
-	0x44, 0x9e, 0x9a, 0xc2, 0x3d, 0x53, 0x33, 0x3b, 0x36, 0x35, 0x11, 0xa7, 0x62, 0x6e, 0x2f, 0x4b,
-	0x53, 0xe2, 0xfe, 0x0c, 0x2b, 0x7c, 0x27, 0x3a, 0x34, 0xca, 0x2d, 0xc1, 0x8e, 0xcb, 0x2b, 0x39,
-	0xe5, 0xff, 0xfe, 0x29, 0xdf, 0x03, 0x39, 0xa7, 0xee, 0xad, 0xeb, 0xa5, 0x64, 0x44, 0xa0, 0x68,
-	0x27, 0xed, 0xc2, 0xf3, 0x03, 0x55, 0xdc, 0x84, 0xea, 0x6b, 0x6a, 0x0d, 0x58, 0x93, 0x5a, 0xec,
-	0x28, 0x70, 0x38, 0x2b, 0x71, 0x1b, 0xb3, 0x8a, 0x6c, 0x2e, 0x74, 0xde, 0xfc, 0x4e, 0xb4, 0xa4,
-	0x84, 0xb5, 0xfd, 0xb3, 0x04, 0x25, 0x84, 0x47, 0x9e, 0x41, 0xb9, 0x61, 0x33, 0x77, 0x44, 0x49,
-	0x66, 0x65, 0x7d, 0x31, 0xf1, 0xe2, 0xec, 0x18, 0x33, 0xe4, 0x25, 0xa8, 0xd1, 0xc2, 0x26, 0x6b,
-	0xf2, 0x75, 0x6a, 0x89, 0xeb, 0x52, 0xbe, 0x64, 0xc5, 0x18, 0x33, 0x64, 0x1f, 0x16, 0xd0, 0x6e,
-	0xde, 0x09, 0x55, 0x91, 0xc7, 0x49, 0x64, 0xc6, 0x1e, 0xce, 0x4d, 0xd4, 0x82, 0xaa, 0x48, 0x14,
-	0x4e, 0xc5, 0xa3, 0x24, 0x6e, 0x62, 0x93, 0xe6, 0x26, 0x79, 0x05, 0x95, 0x78, 0xe4, 0x89, 0x2e,
-	0x01, 0x19, 0xdb, 0x03, 0xb9, 0x09, 0x5e, 0x80, 0xda, 0xb0, 0xc5, 0x9c, 0xad, 0xa5, 0xfe, 0x2f,
-	0xef, 0xb1, 0xac, 0x3e, 0xee, 0x41, 0x55, 0x1e, 0x79, 0xb9, 0x0d, 0x19, 0xab, 0x20, 0x17, 0x40,
-	0x1b, 0x16, 0x12, 0xb9, 0x7f, 0xe2, 0x5a, 0xde, 0x48, 0x22, 0x33, 0x07, 0x21, 0x1b, 0xcc, 0xbc,
-	0x68, 0xe6, 0x39, 0x75, 0xdf, 0xba, 0x1e, 0x59, 0x4f, 0x62, 0x26, 0xe5, 0x9c, 0x0b, 0xe6, 0x60,
-	0xec, 0x8b, 0x49, 0x4e, 0x33, 0xf9, 0x71, 0xa6, 0xeb, 0x39, 0xb7, 0x61, 0xb2, 0x5d, 0xa8, 0xc4,
-	0x4a, 0x27, 0xab, 0x49, 0xa8, 0x2c, 0xff, 0x0c, 0x2e, 0xcd, 0x2a, 0x80, 0xed, 0xf7, 0xeb, 0xde,
-	0x95, 0x63, 0xf5, 0xe9, 0x87, 0x32, 0x7e, 0x27, 0x3e, 0xff, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x82,
-	0x1e, 0x23, 0xad, 0x3b, 0x0a, 0x00, 0x00,
+	// 841 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xc4, 0x56, 0x4f, 0x4f, 0xdb, 0x48,
+	0x14, 0xc7, 0x89, 0x1d, 0x9c, 0xb7, 0x01, 0xb2, 0x03, 0xac, 0x4c, 0x96, 0x5d, 0x90, 0xb5, 0x07,
+	0x4e, 0x91, 0x96, 0x45, 0x68, 0xb5, 0xd2, 0x6a, 0x95, 0x3f, 0x88, 0x8d, 0x80, 0x36, 0x32, 0x44,
+	0xf4, 0xd2, 0x4a, 0xae, 0x3d, 0x04, 0x8b, 0x64, 0x26, 0x4d, 0xc6, 0x29, 0x39, 0x54, 0x3d, 0xf4,
+	0xda, 0x4b, 0x3f, 0x4c, 0x3f, 0x4f, 0xbf, 0x45, 0xcf, 0xd5, 0x4c, 0xc6, 0xf6, 0x24, 0xb1, 0x69,
+	0x44, 0x2b, 0xf5, 0x12, 0xe5, 0xbd, 0x19, 0xbf, 0xf7, 0x7b, 0xef, 0xfd, 0x7e, 0x4f, 0x03, 0xe5,
+	0x73, 0xda, 0x0d, 0x48, 0x7b, 0x48, 0x19, 0xad, 0x0e, 0xf8, 0x2f, 0x32, 0x2f, 0x9b, 0x67, 0xc2,
+	0xb6, 0xef, 0xa1, 0xfc, 0x3f, 0x76, 0x87, 0xac, 0x8e, 0x5d, 0xe6, 0xe0, 0x57, 0x21, 0x1e, 0x31,
+	0x54, 0x01, 0xb3, 0x89, 0xc7, 0x81, 0x87, 0x5b, 0xbe, 0xa5, 0xed, 0x6b, 0x07, 0x45, 0xc7, 0xf4,
+	0xa5, 0x8d, 0x10, 0xe8, 0x9d, 0x4e, 0xab, 0x69, 0xe5, 0x84, 0x5f, 0x0f, 0x3b, 0xad, 0x26, 0x3a,
+	0x02, 0x90, 0xf7, 0xc9, 0x0d, 0xb5, 0xf2, 0xfb, 0xda, 0xc1, 0x4f, 0x87, 0x5b, 0xd5, 0x28, 0x45,
+	0x35, 0x39, 0x73, 0xc0, 0x8f, 0xff, 0xdb, 0x63, 0x40, 0x0d, 0x3c, 0x64, 0xc1, 0x4d, 0xe0, 0xb9,
+	0x0c, 0x47, 0xb9, 0xa3, 0xf8, 0x9a, 0x12, 0x1f, 0x81, 0x7e, 0x35, 0x19, 0x60, 0x91, 0xd3, 0x70,
+	0x74, 0x36, 0x19, 0x60, 0xee, 0x7b, 0xe2, 0xf6, 0xb1, 0xc8, 0x56, 0x74, 0x74, 0xe2, 0xf6, 0x31,
+	0xfa, 0x03, 0xd6, 0x94, 0x88, 0xad, 0xa6, 0xa5, 0x8b, 0xc3, 0x35, 0x4f, 0x75, 0xda, 0x4d, 0x28,
+	0xcf, 0xe4, 0x1d, 0xf4, 0x26, 0xe8, 0x17, 0x28, 0x38, 0x78, 0x14, 0xf6, 0x98, 0xc8, 0x6b, 0x3a,
+	0x85, 0xa1, 0xb0, 0x90, 0x05, 0xab, 0x0d, 0xda, 0xef, 0x63, 0xc2, 0x64, 0xc1, 0xab, 0xde, 0xd4,
+	0xb4, 0x3f, 0x6b, 0x6a, 0xd1, 0x3c, 0xc0, 0xa9, 0xdb, 0xc7, 0x31, 0xf0, 0x42, 0x57, 0x58, 0x22,
+	0xc0, 0xad, 0x4b, 0x08, 0xee, 0xc5, 0x01, 0xa6, 0x26, 0xfa, 0x3d, 0xfa, 0x5e, 0x94, 0x36, 0x2d,
+	0x43, 0xb6, 0xe7, 0x4a, 0x16, 0xd8, 0xba, 0x38, 0x69, 0xc9, 0x1a, 0xf4, 0xe0, 0xe2, 0xa4, 0x85,
+	0xca, 0x90, 0xbf, 0xa8, 0x35, 0x2c, 0x43, 0xb8, 0xf2, 0xfd, 0x5a, 0x43, 0xdc, 0x6a, 0x8f, 0x8f,
+	0xac, 0x82, 0xbc, 0xd5, 0x1e, 0x1f, 0x49, 0xdf, 0xb1, 0xb5, 0x1a, 0xfb, 0x8e, 0xd1, 0x3a, 0xe4,
+	0x9e, 0x5e, 0x5a, 0xa6, 0xf0, 0xe4, 0xe8, 0x25, 0x1f, 0xf1, 0xb9, 0xcb, 0x02, 0x16, 0xfa, 0xd8,
+	0x2a, 0x4e, 0x47, 0xdc, 0x93, 0x36, 0xda, 0x85, 0xe2, 0x39, 0x25, 0xdd, 0xe9, 0x21, 0x88, 0xc3,
+	0x62, 0x2f, 0x72, 0xd8, 0x6f, 0x61, 0xc3, 0xc1, 0xdd, 0x60, 0xc4, 0xf0, 0x50, 0xe1, 0x4b, 0x67,
+	0x84, 0x87, 0x62, 0x1e, 0x92, 0x2f, 0xa1, 0xb4, 0xf9, 0x59, 0xdb, 0x1d, 0x8d, 0xae, 0xe9, 0xd0,
+	0x97, 0x1d, 0x30, 0x07, 0xd2, 0x7e, 0x24, 0x6f, 0xde, 0x69, 0xb0, 0x59, 0xf3, 0x3c, 0x1a, 0x12,
+	0x26, 0x78, 0xfd, 0x63, 0x50, 0x8c, 0xe0, 0xe7, 0xf6, 0x2d, 0x25, 0x78, 0x06, 0xc2, 0x16, 0x18,
+	0xc2, 0x29, 0xf3, 0x1b, 0x03, 0x6e, 0xf0, 0x79, 0x34, 0xa8, 0x8f, 0x23, 0xc9, 0x78, 0xd4, 0xc7,
+	0x8f, 0x4c, 0xfa, 0x5e, 0x03, 0x90, 0x09, 0x39, 0x6b, 0xd3, 0xb4, 0x52, 0x01, 0xb3, 0x16, 0x32,
+	0xaa, 0x24, 0x34, 0x5d, 0x69, 0x73, 0x78, 0x57, 0xf4, 0x0e, 0x13, 0xc9, 0x36, 0x83, 0x71, 0x23,
+	0x01, 0xad, 0xab, 0xa0, 0x6d, 0x28, 0x29, 0x2a, 0xf1, 0x05, 0xe7, 0x4c, 0xa7, 0xa4, 0x48, 0xc9,
+	0xb7, 0x9f, 0xc3, 0x46, 0x2d, 0x64, 0xb7, 0x3c, 0xf6, 0xc3, 0x1d, 0x98, 0xad, 0x36, 0xb7, 0x64,
+	0xb5, 0x7b, 0x60, 0x3c, 0xa8, 0x4e, 0xbe, 0xbb, 0x78, 0xad, 0xf3, 0x2c, 0x88, 0xeb, 0xd7, 0xe6,
+	0xea, 0xff, 0x7e, 0xbb, 0xeb, 0x83, 0x06, 0x9b, 0xf5, 0x80, 0xf8, 0x01, 0xe9, 0x8a, 0x72, 0xbf,
+	0x4a, 0x80, 0x85, 0xbc, 0x53, 0x9c, 0xa2, 0x77, 0x72, 0x1c, 0x1c, 0xa7, 0xb0, 0xe7, 0x30, 0xe9,
+	0x4b, 0x62, 0xfa, 0xa8, 0xc1, 0xb6, 0xc4, 0x24, 0xe5, 0xb1, 0x4c, 0x4f, 0x54, 0xd5, 0xe4, 0x1e,
+	0x50, 0x4d, 0x7e, 0x4e, 0x35, 0x51, 0x4d, 0x7a, 0x66, 0x2f, 0x8d, 0x25, 0x71, 0xbf, 0x81, 0x6d,
+	0xbe, 0x22, 0xbb, 0x38, 0xca, 0xa5, 0xc0, 0x8e, 0xd3, 0x6b, 0x19, 0xe9, 0xbf, 0x7d, 0x94, 0x2f,
+	0x00, 0x5d, 0xe3, 0xe0, 0x3e, 0x20, 0x33, 0x34, 0x42, 0x20, 0x74, 0x1a, 0x49, 0x2b, 0x45, 0xb3,
+	0x4b, 0xb2, 0xf8, 0xf0, 0x93, 0x01, 0x86, 0x08, 0x8d, 0xfe, 0x84, 0x42, 0xcd, 0x63, 0xc1, 0x18,
+	0xa3, 0xd4, 0xaf, 0x2a, 0x1b, 0x89, 0x57, 0xf0, 0xde, 0x5e, 0x41, 0xff, 0x82, 0x19, 0x2d, 0x5b,
+	0xb4, 0xa3, 0x1e, 0xcf, 0x2c, 0xe0, 0x8a, 0x12, 0x2f, 0x59, 0x0f, 0xf6, 0x0a, 0x3a, 0x85, 0x75,
+	0x61, 0xd7, 0x27, 0x92, 0x11, 0xe8, 0xb7, 0xe4, 0x66, 0xca, 0x0e, 0xcd, 0x0c, 0xd4, 0x80, 0x92,
+	0x0c, 0x24, 0xe8, 0x8d, 0x7e, 0x4d, 0xee, 0x2d, 0x6c, 0xc1, 0xcc, 0x20, 0xff, 0x41, 0x31, 0x96,
+	0x2b, 0xaa, 0x28, 0x40, 0xe6, 0x34, 0x9c, 0x19, 0xe0, 0x6f, 0x30, 0x6b, 0x9e, 0xd4, 0xc8, 0xce,
+	0xcc, 0xf7, 0xea, 0x0e, 0x4a, 0xeb, 0xe3, 0x09, 0x94, 0x54, 0xb9, 0xaa, 0x6d, 0x48, 0x91, 0x71,
+	0x26, 0x80, 0x26, 0xac, 0x27, 0x54, 0x7d, 0xcd, 0x79, 0xb8, 0x97, 0xdc, 0x4c, 0x25, 0x71, 0x3a,
+	0x98, 0x35, 0xd9, 0xcc, 0x6b, 0x1c, 0x3c, 0x0b, 0x08, 0xda, 0x4d, 0xee, 0x2c, 0x52, 0x31, 0x13,
+	0xcc, 0xd9, 0xdc, 0x6b, 0x47, 0x0d, 0xb3, 0xf8, 0xb0, 0xaa, 0x54, 0x32, 0x4e, 0xa7, 0xc1, 0xfe,
+	0x81, 0x62, 0xfc, 0x0c, 0x54, 0x67, 0x33, 0xff, 0x36, 0x4c, 0xa9, 0xa7, 0x5e, 0x02, 0xf0, 0x68,
+	0xbf, 0x4a, 0xee, 0xf8, 0x9b, 0xe7, 0x65, 0x41, 0xbc, 0x30, 0xff, 0xfa, 0x12, 0x00, 0x00, 0xff,
+	0xff, 0x93, 0x9b, 0x24, 0x63, 0x75, 0x0a, 0x00, 0x00,
 }
