@@ -3,120 +3,142 @@ syntax = "proto3";
 package SDKProto;
 option java_package = "com.nkgame";
 service Login {
-	
-	rpc Active(DeviceInfo) returns(Reply){}
 
-	rpc Register(RegisterRequest) returns(LoginReply){}
-	rpc LoginByAccount(AccountLoginRequest) returns(LoginReply){}
-	rpc LoginByPhone(PhoneLoginRequest) returns(LoginReply){}
-	rpc AutoLogin(AutoLoginRequest) returns(LoginReply){}
+    rpc Active (DeviceInfo) returns (Reply) {
+    }
 
-	rpc ActhCode(AuthCodeRequest) returns(Reply){}
+    rpc Register (RegisterRequest) returns (LoginReply) {
+    }
+    rpc LoginByAccount (AccountLoginRequest) returns (LoginReply) {
+    }
+    rpc LoginByPhone (PhoneLoginRequest) returns (LoginReply) {
+    }
+    rpc AutoLogin (AutoLoginRequest) returns (LoginReply) {
+    }
 
-	rpc BindingPhone(BindingPhoneRequest) returns(LoginReply){}
-	
-	rpc ChangePassword(ChangePassWordRequest) returns(Reply){}
+    rpc ActhCode (AuthCodeRequest) returns (Reply) {
+    }
 
-	rpc LoginByWeiXin(WeixinLoginRequest) returns(LoginReply){}
+    rpc BindingPhone (BindingPhoneRequest) returns (LoginReply) {
+    }
+
+    rpc ChangePassword (ChangePassWordRequest) returns (Reply) {
+    }
+
+    rpc LoginByWeiXin (WeixinLoginRequest) returns (LoginReply) {
+    }
+
+    rpc CertificateID (CertificateRequest) returns (CertificateReply) {
+    }
+
+    rpc HeartBeat (HeartBeatRequest) returns (Reply) {
+    }
 }
 
-message DeviceInfo 
-{
-	string GameID 		= 1;	//游戏ID
-	string Channel 		= 2;	//渠道ID
-	string DeviceType 	= 3;	//设备类型
-	string IMEI 		= 4;	//设备标识码
-	string MAC 			= 5;	//网卡地址
-	string IPv4 		= 6;	//IPv4地址
-	string IPv6 		= 7;	//IPv6地址
-	string OS 				= 8;	//系统类型
-	string Latitude     = 9;     //纬度
-    string Longitude   = 10;     //经度
+//心跳
+message HeartBeatRequest{
+    string DeviceId =1;
+    string UUID =2;
+    DeviceInfo DeviceInfo = 3;
+}
+
+message CertificateRequest {
+    string UUID = 1;
+    int32 Type = 2; //证件类型
+    string Name = 3; //名字
+    string CertificateID = 4; //证件id
+}
+
+message CertificateReply {
+    bool Result = 1;
+    string Comment = 2;
+}
+
+message DeviceInfo {
+    string GameID = 1; //游戏ID
+    string Channel = 2; //渠道ID
+    string DeviceType = 3; //设备类型
+    string IMEI = 4; //设备标识码
+    string MAC = 5; //网卡地址
+    string IPv4 = 6; //IPv4地址
+    string IPv6 = 7; //IPv6地址
+    string OS = 8; //系统类型
+    string Latitude = 9; //纬度
+    string Longitude = 10; //经度
+    string DeviceId     = 11;   //设备id
 }
 
 //注册普通账号
-message RegisterRequest 
-{
-	string UserName 		= 1;
-	string PassWord 		= 2;
-	DeviceInfo DeviceInfo 	= 3;
+message RegisterRequest {
+    string UserName = 1;
+    string PassWord = 2;
+    DeviceInfo DeviceInfo = 3;
 }
 
 //普通账号登陆
-message AccountLoginRequest
-{
-	string UserName 		= 1;
-	string PassWord 		= 2;
-	DeviceInfo DeviceInfo 	= 3;
+message AccountLoginRequest {
+    string UserName = 1;
+    string PassWord = 2;
+    DeviceInfo DeviceInfo = 3;
 }
 
 //手机号码登录
-message PhoneLoginRequest
-{
-	string Phone 			= 1;
-	string Code 			= 2;
-	DeviceInfo DeviceInfo	= 3;
+message PhoneLoginRequest {
+    string Phone = 1;
+    string Code = 2;
+    DeviceInfo DeviceInfo = 3;
 }
 
-message LoginReply
-{
-	string UUID				= 1;	//用户标识码
-	string AutoCode 		= 2;	//登陆密钥
-	string Token			= 3;	//本次登陆令牌
-	string Phone 			= 4;	//手机号码
+message LoginReply {
+    string UUID = 1; //用户标识码
+    string AutoCode = 2; //登陆密钥
+    string Token = 3; //本次登陆令牌
+    string Phone = 4; //手机号码
+    bool Certificated = 5; //认证
 }
 
 //发送手机验证码
-message AuthCodeRequest
-{
-	string Phone			= 1;
-	DeviceInfo DeviceInfo	= 2;
+message AuthCodeRequest {
+    string Phone = 1;
+    DeviceInfo DeviceInfo = 2;
 }
-message Reply
-{
-	bool Result = 1;
+message Reply {
+    bool Result = 1;
 }
 
 //自动登陆
-message AutoLoginRequest
-{
-	string AutoCode			= 1;
-	string UUID				= 2;
-	DeviceInfo DeviceInfo	= 3;
+message AutoLoginRequest {
+    string AutoCode = 1;
+    string UUID = 2;
+    DeviceInfo DeviceInfo = 3;
 }
 
 //账号绑定手机号码
-message BindingPhoneRequest
-{
-	string Phone 			= 1;
-	string UUID				= 2;
-	string AuthCode 		= 3;
-	DeviceInfo DeviceInfo	= 4;
+message BindingPhoneRequest {
+    string Phone = 1;
+    string UUID = 2;
+    string AuthCode = 3;
+    DeviceInfo DeviceInfo = 4;
 }
 
 //绑定普通账号
-message BindingAccountRequest
-{
-	string AutoCode			= 1;
-	string UserName			= 2;
-	string PassWord 		= 3;
-	string UUID				= 4;
-	DeviceInfo DeviceInfo	= 5;
+message BindingAccountRequest {
+    string AutoCode = 1;
+    string UserName = 2;
+    string PassWord = 3;
+    string UUID = 4;
+    DeviceInfo DeviceInfo = 5;
 }
 
 //修改密码
-message ChangePassWordRequest
-{
-	string PassWord 		= 1;
-	string UUID				= 2;
-	DeviceInfo DeviceInfo	= 3;
+message ChangePassWordRequest {
+    string PassWord = 1;
+    string UUID = 2;
+    DeviceInfo DeviceInfo = 3;
 }
 
 //微信登陆
-message WeixinLoginRequest
-{
-    string  code           =1;
-    DeviceInfo  DeviceInfo =2;
+message WeixinLoginRequest {
+    string code = 1;
+    DeviceInfo DeviceInfo = 2;
 }
-
-
