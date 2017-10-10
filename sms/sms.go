@@ -354,6 +354,7 @@ func tencent(phone, code, channel string) error {
 	if channel != "" {
 		index = fmt.Sprintf("TENCENT:%s", channel)
 	}
+	fmt.Println(index, conf)
 	type TencentSender struct {
 		SDKAppID string
 		AppKey   string
