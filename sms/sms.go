@@ -351,10 +351,10 @@ func tencent(phone, code, channel string) error {
 	conf, _ := config.NewConfig("ini", "conf/settings.conf")
 
 	index := "TENCENT"
-	if channel != "" {
-		index = fmt.Sprintf("TENCENT:%s", channel)
-	}
-	fmt.Println(index, conf)
+	// if channel != "" {
+	// 	index = fmt.Sprintf("TENCENT:%s", channel)
+	// }
+	// fmt.Println(index, conf)
 	type TencentSender struct {
 		SDKAppID string
 		AppKey   string
