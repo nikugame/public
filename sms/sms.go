@@ -3,6 +3,7 @@
 package sms
 
 import (
+	"LPSystem/plugins/logs"
 	"bytes"
 	"crypto/sha256"
 	"encoding/json"
@@ -389,7 +390,7 @@ func tencent(phone, code, channel string) error {
 		Extend  string `json:"extend"`
 		Ext     string `json:"ext"`
 	}
-	param.Tel.NationCode = "+86"
+	param.Tel.NationCode = "86"
 	param.Tel.Mobile = phone
 	param.Type = 0
 	param.Message = fmt.Sprintf(s.Msg, code)
@@ -404,7 +405,7 @@ func tencent(phone, code, channel string) error {
 
 	b, _ := json.Marshal(param)
 
-	// logs.Debug(string(b))
+	logs.Debug(string(b))
 
 	url := fmt.Sprintf("https://yun.tim.qq.com/v5/tlssmssvr/sendsms?sdkappid=%s&random=%s", s.SDKAppID, random)
 	request, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
