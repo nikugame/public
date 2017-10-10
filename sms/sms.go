@@ -389,7 +389,7 @@ func tencent(phone, code, channel string) error {
 		Extend  string `json:"extend"`
 		Ext     string `json:"ext"`
 	}
-	// param.Tel.NationCode = country
+	param.Tel.NationCode = "+86"
 	param.Tel.Mobile = phone
 	param.Type = 0
 	param.Message = fmt.Sprintf(s.Msg, code)
