@@ -3,6 +3,8 @@
 package sms
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,10 +13,12 @@ import (
 	"net/url"
 	"sort"
 	"strings"
+	"time"
+
+	"NikCommon/config"
+	"NikCommon/tools"
 
 	"github.com/axgle/mahonia"
-	"github.com/nikugame/public/config"
-	"github.com/nikugame/public/tools"
 )
 
 //SendMessage func(phone, code string) error Send SMS function
@@ -30,6 +34,8 @@ import (
 // 		return dayu(phone, code)
 // 	case 3:
 // 		return xiao(phone, code)
+// 	case 4:
+// 		return yunpian(phone, code)
 // 	default:
 // 		return errors.New("error configure")
 // 	}
@@ -61,6 +67,10 @@ func SendMessage(str ...string) error {
 		return dayu(phone, code, channel)
 	case 3:
 		return xiao(phone, code, channel)
+	case 4:
+		return yunpian(phone, code, channel)
+	case 5:
+		return tencent(phone, code, channel)
 	default:
 		return errors.New("error configure")
 	}
@@ -289,6 +299,143 @@ func dayu(phone, code, channel string) error {
 		}
 	}
 	return nil
+}
+
+//yunpian func(phone, code, channel string) error send sms use dayu
+func yunpian(phone, code, channel string) error {
+	conf, _ := config.NewConfig("ini", "conf/settings.conf")
+
+	index := "YUNPIAN"
+	if channel != "" {
+		index = fmt.Sprintf("YUNPIAN:%s", channel)
+	}
+
+	u, _ := url.Parse(conf.String(fmt.Sprintf("%s::url", index)))
+	data := make(url.Values)
+	decoder := mahonia.NewEncoder("utf-8")
+	text := decoder.ConvertString(strings.Replace(conf.String(fmt.Sprintf("%s::content", index)), "*", code, -1))
+	data["text"] = []string{text}
+	data["apikey"] = []string{conf.String(fmt.Sprintf("%s::key", index))}
+	data["mobile"] = []string{phone}
+	response, err := http.PostForm(u.String(), data)
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	type resMsg struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}
+
+	var res resMsg
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return errors.New("json err! ret:" + string(body))
+	}
+
+	switch res.Code {
+	case 0:
+		return nil
+	default:
+		return errors.New(res.Msg)
+	}
+}
+
+func tencent(phone, code, channel string) error {
+
+	conf, _ := config.NewConfig("ini", "conf/settings.conf")
+
+	index := "TENCENT"
+	if channel != "" {
+		index = fmt.Sprintf("TENCENT:%s", channel)
+	}
+	type TencentSender struct {
+		SDKAppID string
+		AppKey   string
+		Msg      string
+	}
+	s := &TencentSender{}
+	s.AppKey = conf.String(fmt.Sprintf("%s::appkey", index))
+	s.SDKAppID = conf.String(fmt.Sprintf("%s::appid", index))
+	s.Msg = conf.String(fmt.Sprintf("%s::msg", index))
+	// sender := &TencentSender{}
+	// elem := reflect.ValueOf(sender).Elem()
+	// for i := 0; i < elem.NumField(); i++ {
+	// 	name := elem.Type().Field(i).Name
+	// 	val, found := conf[strings.ToLower(name)]
+	// 	if !found {
+	// 		return nil, errors.New("mot enough param")
+	// 	}
+	// 	elem.Field(i).SetString(val)
+	// }
+
+	random := time.Now().Format("050402012006")
+	unix := time.Now().Unix()
+	var param struct {
+		Tel struct {
+			NationCode string `json:"nationcode"`
+			Mobile     string `json:"mobile"`
+		} `json:"tel"`
+		Type    int    `json:"type"`
+		Message string `json:"msg"`
+		Sign    string `json:"sig"`
+		Time    int64  `json:"time"`
+		Extend  string `json:"extend"`
+		Ext     string `json:"ext"`
+	}
+	// param.Tel.NationCode = country
+	param.Tel.Mobile = phone
+	param.Type = 0
+	param.Message = fmt.Sprintf(s.Msg, code)
+	param.Time = unix
+
+	base := "appkey=%s&random=%s&time=%d&mobile=%s"
+	str := fmt.Sprintf(base, s.AppKey, random, unix, phone)
+
+	h := sha256.New()
+	h.Write([]byte(str))
+	param.Sign = fmt.Sprintf("%x", h.Sum(nil))
+
+	b, _ := json.Marshal(param)
+
+	// logs.Debug(string(b))
+
+	url := fmt.Sprintf("https://yun.tim.qq.com/v5/tlssmssvr/sendsms?sdkappid=%s&random=%s", s.SDKAppID, random)
+	request, err := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	respone, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	body, _ := ioutil.ReadAll(respone.Body)
+	defer respone.Body.Close()
+
+	var res struct {
+		Result  int    `json:"result"`
+		Message string `json:"errmsg"`
+		Ext     string `json:"ext"`
+		SID     string `json:"sid"`
+		Fee     int    `json:"fee"`
+	}
+	if err := json.Unmarshal(body, &res); err != nil {
+		return err
+	}
+	if res.Result != 0 {
+		return errors.New(res.Message)
+	}
+	// logs.Debug(string(body))
+	return nil
+
 }
 
 //sign func(map[string]string, string) string
