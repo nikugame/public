@@ -33,6 +33,11 @@ func init() {
 					c.Close()
 					return nil, err
 				}
+				_, err = c.Do("SELECT", conf.DefaultInt("Redis::db", 0))
+				if err != nil {
+					c.Close()
+					return nil, err
+				}
 				return c, nil
 			},
 		}
@@ -46,6 +51,11 @@ func init() {
 				if err != nil {
 					log.Log("Redis Connect ERROR: %s", err)
 					os.Exit(1)
+				}
+				_, err = c.Do("SELECT", conf.DefaultInt("Redis::db", 0))
+				if err != nil {
+					c.Close()
+					return nil, err
 				}
 				return c, nil
 			},
